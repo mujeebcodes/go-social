@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/mujeebcodes/go-social/internal/db"
 	"github.com/mujeebcodes/go-social/internal/env"
 	"github.com/mujeebcodes/go-social/internal/store"
 	"log"
@@ -10,9 +11,23 @@ func main() {
 
 	cfg := config{
 		addr: env.GetString("ADDRESS", ":8080"),
+		db: dbConfig{
+			addr:         env.GetString("DB_ADDR", ""),
+			maxOpenConns: env.GetInt("MAX_OPEN_CONNS", 30),
+			maxIdleConns: env.GetInt("MAX_IDLE_CONNS", 30),
+			maxIdleTime:  env.GetString("MAX_IDLE_TIME", "15m"),
+		},
 	}
 
-	store := store.NewStorage(nil)
+	db, err := db.New(cfg.db.addr, cfg.db.maxOpenConns, cfg.db.maxIdleConns, cfg.db.maxIdleTime)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	defer db.Close()
+	log.Println("database connection pool established")
+
+	store := store.NewStorage(db)
 
 	app := &application{
 		config: cfg,
