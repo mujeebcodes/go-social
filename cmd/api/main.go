@@ -12,7 +12,7 @@ const version = "0.0.1"
 func main() {
 
 	cfg := config{
-		addr: env.GetString("ADDR", ":8080"),
+		addr: env.GetString("PORT", ":8080"),
 
 		db: dbConfig{
 			addr:         env.GetString("DB_ADDR", ""),
