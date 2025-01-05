@@ -5,6 +5,7 @@ import (
 	"github.com/mujeebcodes/go-social/internal/env"
 	"github.com/mujeebcodes/go-social/internal/store"
 	"go.uber.org/zap"
+	"time"
 )
 
 const version = "0.0.1"
@@ -39,7 +40,8 @@ func main() {
 			maxIdleConns: env.GetInt("MAX_IDLE_CONNS", 30),
 			maxIdleTime:  env.GetString("MAX_IDLE_TIME", "15m"),
 		},
-		env: env.GetString("ENV", "development"),
+		env:  env.GetString("ENV", "development"),
+		mail: mailConfig{exp: time.Hour * 24 *3},
 	}
 
 	//Logger
