@@ -98,7 +98,7 @@ func (s *UserStore) CreateAndInvite(ctx context.Context, user *User, token strin
 }
 
 func (s *UserStore) createUserInvitation(ctx context.Context, tx *sql.Tx, token string, exp time.Duration, userID int64) error {
-	query := `INSERT INTO user_invitations (user_id, token, expires_at) VALUES ($1, $2, $3)`
+	query := `INSERT INTO user_invitations (user_id, token, expiry) VALUES ($1, $2, $3)`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()

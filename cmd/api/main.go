@@ -32,7 +32,7 @@ func main() {
 
 	cfg := config{
 		addr:   env.GetString("PORT", ":8080"),
-		apiURL: env.GetString("EXTERNAL_URL", "localhost:8080"),
+		apiURL: env.GetString("EXTERNAL_URL", "localhost:4000"),
 
 		db: dbConfig{
 			addr:         env.GetString("DB_ADDR", ""),
@@ -41,7 +41,7 @@ func main() {
 			maxIdleTime:  env.GetString("MAX_IDLE_TIME", "15m"),
 		},
 		env:  env.GetString("ENV", "development"),
-		mail: mailConfig{exp: time.Hour * 24 *3},
+		mail: mailConfig{exp: time.Hour * 24 * 3},
 	}
 
 	//Logger
