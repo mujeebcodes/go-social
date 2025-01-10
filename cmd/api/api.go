@@ -36,7 +36,9 @@ type mailConfig struct {
 }
 
 type mailTrapConfig struct {
-	apiKey string
+	apiKey          string
+	sandboxUsername string
+	sandboxPassword string
 }
 type dbConfig struct {
 	addr         string

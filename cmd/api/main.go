@@ -47,7 +47,9 @@ func main() {
 			exp:       time.Hour * 24 * 3,
 			fromEmail: env.GetString("FROM_EMAIL", ""),
 			mailTrap: mailTrapConfig{
-				apiKey: env.GetString("MAIL_TRAP_API_KEY", ""),
+				apiKey:          env.GetString("MAIL_TRAP_API_KEY", ""),
+				sandboxUsername: env.GetString("MAIL_TRAP_SANDBOX_USERNAME", ""),
+				sandboxPassword: env.GetString("MAIL_TRAP_SANDBOX_PASSWORD", ""),
 			},
 		},
 	}
@@ -66,7 +68,7 @@ func main() {
 	logger.Info("database connection pool established")
 
 	store := store.NewStorage(db)
-	mailtrap, err := mailer.NewMailTrapClient(cfg.mail.mailTrap.apiKey, cfg.mail.fromEmail)
+	mailtrap, err := mailer.NewMailTrapClient(cfg.mail.mailTrap.apiKey, cfg.mail.fromEmail, cfg.mail.mailTrap.sandboxUsername, cfg.mail.mailTrap.sandboxPassword)
 	if err != nil {
 		logger.Fatal(err)
 	}

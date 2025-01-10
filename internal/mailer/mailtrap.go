@@ -8,18 +8,22 @@ import (
 )
 
 type mailtrapClient struct {
-	fromEmail string
-	apiKey    string
+	fromEmail       string
+	apiKey          string
+	sandboxUsername string
+	sandboxPassword string
 }
 
-func NewMailTrapClient(apiKey, fromEmail string) (mailtrapClient, error) {
+func NewMailTrapClient(apiKey, fromEmail, sandboxUsername, sandboxPassword string) (mailtrapClient, error) {
 	if apiKey == "" {
 		return mailtrapClient{}, errors.New("api key is required")
 	}
 
 	return mailtrapClient{
-		fromEmail: fromEmail,
-		apiKey:    apiKey,
+		fromEmail:       fromEmail,
+		apiKey:          apiKey,
+		sandboxUsername: sandboxUsername,
+		sandboxPassword: sandboxPassword,
 	}, nil
 }
 func (m mailtrapClient) Send(templateFile, username, email string, data any, isSandbox bool) error {
@@ -47,7 +51,7 @@ func (m mailtrapClient) Send(templateFile, username, email string, data any, isS
 	var dialer *gomail.Dialer
 	if isSandbox {
 		// Use Mailtrap Sandbox SMTP credentials
-		dialer = gomail.NewDialer("smtp.mailtrap.io", 587, "ef3c89bf1767f2", "271faa657718e6")
+		dialer = gomail.NewDialer("smtp.mailtrap.io", 587, m.sandboxUsername, m.sandboxPassword)
 	} else {
 		// Use Mailtrap Production SMTP credentials
 		dialer = gomail.NewDialer("live.smtp.mailtrap.io", 587, "api", m.apiKey)
