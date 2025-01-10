@@ -21,17 +21,23 @@ type application struct {
 }
 
 type config struct {
-	addr   string
-	db     dbConfig
-	env    string
-	apiURL string
-	mail   mailConfig
+	addr        string
+	db          dbConfig
+	env         string
+	apiURL      string
+	mail        mailConfig
+	frontendURL string
 }
 
 type mailConfig struct {
-	exp time.Duration
+	mailTrap  mailTrapConfig
+	fromEmail string
+	exp       time.Duration
 }
 
+type mailTrapConfig struct {
+	apiKey string
+}
 type dbConfig struct {
 	addr         string
 	maxOpenConns int

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/mujeebcodes/go-social/internal/db"
 	"github.com/mujeebcodes/go-social/internal/env"
+	"github.com/mujeebcodes/go-social/internal/mailer"
 	"github.com/mujeebcodes/go-social/internal/store"
 	"go.uber.org/zap"
 	"time"
@@ -31,8 +32,9 @@ const version = "0.0.1"
 func main() {
 
 	cfg := config{
-		addr:   env.GetString("PORT", ":8080"),
-		apiURL: env.GetString("EXTERNAL_URL", "localhost:4000"),
+		addr:        env.GetString("PORT", ":8080"),
+		apiURL:      env.GetString("EXTERNAL_URL", "localhost:4000"),
+		frontendURL: env.GetString("FRONTEND_URL", "localhost:8000"),
 
 		db: dbConfig{
 			addr:         env.GetString("DB_ADDR", ""),
@@ -40,8 +42,14 @@ func main() {
 			maxIdleConns: env.GetInt("MAX_IDLE_CONNS", 30),
 			maxIdleTime:  env.GetString("MAX_IDLE_TIME", "15m"),
 		},
-		env:  env.GetString("ENV", "development"),
-		mail: mailConfig{exp: time.Hour * 24 * 3},
+		env: env.GetString("ENV", "development"),
+		mail: mailConfig{
+			exp:       time.Hour * 24 * 3,
+			fromEmail: env.GetString("FROM_EMAIL", ""),
+			mailTrap: mailTrapConfig{
+				apiKey: env.GetString("MAIL_TRAP_API_KEY", ""),
+			},
+		},
 	}
 
 	//Logger
@@ -58,11 +66,16 @@ func main() {
 	logger.Info("database connection pool established")
 
 	store := store.NewStorage(db)
+	mailtrap, err := mailer.NewMailTrapClient(cfg.mail.mailTrap.apiKey, cfg.mail.fromEmail)
+	if err != nil {
+		logger.Fatal(err)
+	}
 
 	app := &application{
 		config: cfg,
 		store:  store,
 		logger: logger,
+		mailer: mailtrap,
 	}
 
 	mux := app.mount()
