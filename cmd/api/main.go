@@ -52,6 +52,12 @@ func main() {
 				sandboxPassword: env.GetString("MAIL_TRAP_SANDBOX_PASSWORD", ""),
 			},
 		},
+		auth: authConfig{
+			basic: basicConfig{
+				user: env.GetString("AUTH_BASIC_USER", ""),
+				pass: env.GetString("AUTH_BASIC_PASS", ""),
+			},
+		},
 	}
 
 	//Logger
