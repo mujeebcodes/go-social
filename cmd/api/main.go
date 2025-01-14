@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/mujeebcodes/go-social/internal/auth"
 	"github.com/mujeebcodes/go-social/internal/db"
 	"github.com/mujeebcodes/go-social/internal/env"
 	"github.com/mujeebcodes/go-social/internal/mailer"
@@ -57,6 +58,11 @@ func main() {
 				user: env.GetString("AUTH_BASIC_USER", ""),
 				pass: env.GetString("AUTH_BASIC_PASS", ""),
 			},
+			token: tokenConfig{
+				secret: env.GetString("AUTH_TOKEN_SECRET", "example"),
+				exp:    time.Hour * 24 * 3,
+				iss:    "go-social",
+			},
 		},
 	}
 
@@ -78,12 +84,15 @@ func main() {
 	if err != nil {
 		logger.Fatal(err)
 	}
+	
+	jwtAuthenticator := auth.NewJWTAuthenticator(cfg.auth.token.secret, cfg.auth.token.iss, cfg.auth.token.iss)
 
 	app := &application{
-		config: cfg,
-		store:  store,
-		logger: logger,
-		mailer: mailtrap,
+		config:        cfg,
+		store:         store,
+		logger:        logger,
+		mailer:        mailtrap,
+		authenticator: jwtAuthenticator,
 	}
 
 	mux := app.mount()
