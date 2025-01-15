@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/mujeebcodes/go-social/internal/mailer"
 	"github.com/mujeebcodes/go-social/internal/store"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
 )
@@ -150,6 +151,14 @@ func (app *application) createTokenHandler(w http.ResponseWriter, r *http.Reques
 		default:
 			app.internalServerError(w, r, err)
 		}
+		return
+	}
+
+	fmt.Println(user.Password.ToBytes(), user.Password)
+	fmt.Println(user.Password)
+	err = bcrypt.CompareHashAndPassword(user.Password.ToBytes(), []byte(payload.Password))
+	if err != nil {
+		app.unauthorizedErrorResponse(w, r, err)
 		return
 	}
 

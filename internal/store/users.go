@@ -37,7 +37,13 @@ func (p *Password) Set(text string) error {
 	p.text = &text
 	p.hash = hash
 	return nil
+}
 
+func (p Password) ToBytes() []byte {
+	if p.text == nil {
+		return nil
+	}
+	return []byte(*p.text)
 }
 
 type UserStore struct {
