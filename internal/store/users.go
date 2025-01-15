@@ -39,11 +39,8 @@ func (p *Password) Set(text string) error {
 	return nil
 }
 
-func (p Password) ToBytes() []byte {
-	if p.text == nil {
-		return nil
-	}
-	return []byte(*p.text)
+func (p *Password) Compare(text string) error {
+	return bcrypt.CompareHashAndPassword(p.hash, []byte(text))
 }
 
 type UserStore struct {
