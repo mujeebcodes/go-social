@@ -49,6 +49,9 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 	user := &store.User{
 		Username: payload.Username,
 		Email:    payload.Email,
+		Role: store.Role{
+			Name: "user",
+		},
 	}
 
 	if err := user.Password.Set(payload.Password); err != nil {
@@ -164,6 +167,7 @@ func (app *application) createTokenHandler(w http.ResponseWriter, r *http.Reques
 		"iat": time.Now().Unix(),
 		"nbf": time.Now().Unix(),
 		"iss": app.config.auth.token.iss,
+		"aud": app.config.auth.token.iss,
 	}
 	token, err := app.authenticator.GenerateToken(claims)
 	if err != nil {
